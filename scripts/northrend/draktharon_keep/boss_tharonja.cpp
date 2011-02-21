@@ -61,7 +61,7 @@ enum
 
     //achie hacks
     ACHIEVEMENT_NORMAL                = 482,
-    ACHIEVEMENT_HEROIC                = 493
+    ACHIEVEMENT_HEROIC                = 493,
 
 	ACHIEVEMENT_SPELL_THARONJA		  = 61863,
 };
