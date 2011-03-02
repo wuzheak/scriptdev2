@@ -55,7 +55,7 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
         Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    instance_gundrak* m_pInstance;
     bool m_bIsRegularMode;
     bool m_bBerserk;
 
@@ -89,8 +89,14 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ECK, DONE);
     }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_ECK, FAIL);
+    }
  
-	void SpellHitTarget (Unit* pUnit, const SpellEntry* pSpellEntry)
+    void SpellHitTarget (Unit* pUnit, const SpellEntry* pSpellEntry)
     {
        if (pSpellEntry->Id == SPELL_ECK_SPITE && pUnit->GetTypeId() == TYPEID_PLAYER
             && !pUnit->HasAura(SPELL_ECK_RESIDUE_DEBUFF))
@@ -106,33 +112,39 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
         {
             DoCastSpellIfCan(m_creature, SPELL_ECK_SPITE);             
             m_uiEckSpiteTimer = 15000;
-        }else m_uiEckSpiteTimer -= uiDiff;
+        }
+        else 
+            m_uiEckSpiteTimer -= uiDiff;
 
         if (m_uiEckSpringTimer < uiDiff)
         {
             if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
-			{
+            {
                 DoCastSpellIfCan(target, SPELL_ECK_SPRING);
-				m_creature->DeleteThreatList();
-				m_creature->SetInCombatWith(target);
-				m_creature->AddThreat(target, 1.0f);
-				m_creature->Attack(target, true);
-			}
+                m_creature->DeleteThreatList();
+                m_creature->SetInCombatWith(target);
+                m_creature->AddThreat(target, 1.0f);
+                m_creature->Attack(target, true);
+            }
             m_uiEckSpringTimer = 8000;
-        }else m_uiEckSpringTimer -= uiDiff;
+        }
+        else 
+            m_uiEckSpringTimer -= uiDiff;
 
         if (m_uiEckBitTimer < uiDiff)
         {
-			if (Unit* target = m_creature->getVictim())
-				DoCastSpellIfCan(target, SPELL_ECK_BIT);
+            if (Unit* target = m_creature->getVictim())
+                DoCastSpellIfCan(target, SPELL_ECK_BIT);
             m_uiEckBitTimer = 5000;
-        }else m_uiEckBitTimer -= uiDiff;
+        }
+        else
+            m_uiEckBitTimer -= uiDiff;
 
         if (!m_bBerserk)
         {
             if (m_creature->GetHealthPercent() <= 20.0f)
             {
-				DoScriptText(EMOTE_BERSERK, m_creature);
+                DoScriptText(EMOTE_BERSERK, m_creature);
                 DoCastSpellIfCan(m_creature, SPELL_ECK_BERSERK);
                 m_bBerserk = true;
             }
@@ -145,7 +157,9 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
                 DoCastSpellIfCan(m_creature, SPELL_ECK_BERSERK);
                 DoScriptText(EMOTE_BERSERK, m_creature);
                 m_bBerserk = true;
-            }else m_uiEckBerserkTimer -= uiDiff;
+            }
+            else 
+                m_uiEckBerserkTimer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();
